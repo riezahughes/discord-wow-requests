@@ -10,9 +10,16 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "dotenv": "^8.0.0"
+    "dotenv": "^8.0.0",
+    "husky": "^2.4.1",
+    "pretty-quick": "^1.11.1"
   },
   "devDependencies": {
     "prettier": "1.18.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
