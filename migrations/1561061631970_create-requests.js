@@ -3,7 +3,8 @@ exports.up = pgm => {
     id: "id",
     user_id: { type: "bigint", notNull: true },
     item_name: { type: "text", notNull: true },
-    quantity: { type: "integer", notNull: true },
+    intial_quantity: { type: "integer", notNull: true },
+    current_quantity: { type: "integer", notNull: true },
     createdAt: {
       type: "timestamp",
       notNull: true,

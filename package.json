@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "create_db": "cross-var createdbjs $DB_NAME --user=$DB_USERNAME --password=$DB_PASSWORD",
+    "destroy_db": "cross-var dropdbjs $DB_NAME --user=$DB_USERNAME --password=$DB_PASSWORD",
     "migrate": "node-pg-migrate"
   },
   "author": "",
