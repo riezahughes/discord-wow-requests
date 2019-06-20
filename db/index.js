@@ -4,5 +4,6 @@ const pool = new Pool()
 
 module.exports = {
   createRequest: request.createRequest(pool),
-  listRequests: request.listRequests(pool)
+  listRequests: request.listRequests(pool),
+  depositRequest: request.depositRequest(pool)
 }
