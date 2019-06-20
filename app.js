@@ -34,14 +34,54 @@ client.on('message', msg => {
 
         let requestItems = msg.content.substr(msg.content.indexOf(' ')+1);
         
+        let shoppingList = requestItems.split(" ")
+        
         //quick test to show things going through correctly.
         console.log(commandSplit + " of " + requestItems + " from " + msg.member.user.tag + " ( id:" + msg.member.id + " )");
 
         
-        if(commandSplit === "!request"){
-            
+        if(commandSplit === "!request" && !isNaN(shoppingList[0])){
+            let runRequest = request.createRequest();
+            if(runRequest.success === true){
 
-            msg.reply(request.createRequest());
+                let richembed = 
+                      {
+                        "title": ":id: `123` - New Request From: ",
+                        "description": "\n\n<@"+ msg.member.id +">",
+                        "color": 5508893,
+                        "timestamp": "2019-06-20T22:07:57.142Z",
+                        "footer": {
+                          "icon_url": "https://cdn.discordapp.com/embed/avatars/0.png",
+                          "text": "Be excellent to each other"
+                        },
+                        "thumbnail": {
+                          "url": "https://cdn.discordapp.com/embed/avatars/0.png"
+                        },
+                  
+                        "fields": [
+                  
+                          {
+                            "name": "Item",
+                            "value": "```Good Cheerios```",
+                            "inline": true
+                          },
+                          {
+                            "name": "Quantity Needed:",
+                            "value": "```90```",
+                            "inline": true
+                          }
+                        ]
+                      };
+
+                client.channels.get(process.env.BOTCHANNEL).send({embed: richembed});
+
+                let returnResponse = "Request Created! :id:: ` "+ runRequest.id +" `";
+                msg.reply(`${returnResponse}! Check <#${process.env.BOTCHANNEL}> for post`);
+
+            }else{
+                msg.reply("Format incorrect. Please try again. `!request [qty] [item]`");
+            }
+            
         }
 
         if(commandSplit === "!deposit"){
