@@ -9,3 +9,8 @@ the post will have the ID of the request, what item, who requested it (as a tag)
 A response will be given to the user saying the request has been taken. 
 
 */
+function createRequest(userid, qty, item){
+    return "Created a Request"
+}
+
+module.exports.createRequest = createRequest;

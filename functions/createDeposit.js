@@ -10,3 +10,9 @@ If it is, then that row is marked as complete, the original poster is notified v
 If it is not, then the value is updated in the db row. The user is told how much is left to go and the post in the request board is updated to show how much is remaining.
 
 */
+
+function createDeposit(requestid, item, quantity){
+    return "Made it to deposit"
+}
+
+module.exports.createDeposit = createDeposit;
