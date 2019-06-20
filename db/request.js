@@ -15,5 +15,19 @@ module.exports = {
     } finally {
       client.release()
     }
+  },
+
+  listRequests: pool => async () => {
+    const client = await pool.connect()
+
+    try {
+      const requestsQuery = "SELECT * FROM requests"
+      const result = await client.query(requestsQuery)
+      return result.rows
+    } catch {
+      throw e
+    } finally {
+      client.release()
+    }
   }
 }
