@@ -9,7 +9,7 @@ also it's a wow bot or something. idk.
 Create database:
 
 ```
-DB_NAME=discord_wow_request DB_USERNAME=postgres DB_PASSWORD=postgres npm run create_db
+PGDATABASE=discord_wow_request PGUSER=postgres PGPASSWORD=postgres npm run create_db
 ```
 
 Run migrations:
