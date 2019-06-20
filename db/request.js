@@ -29,5 +29,23 @@ module.exports = {
     } finally {
       client.release()
     }
+  },
+
+  depositRequest: pool => async (request_id, quantity) => {
+    const client = await pool.connect()
+
+    try {
+      await client.query("BEGIN")
+      const updateQuantity =
+        "UPDATE requests SET current_quantity = current_quantity - $1 WHERE id = $2"
+      const updateQuantityValues = [request_id, quantity]
+      await client.query(updateQuantity, updateQuantityValues)
+      await client.query("COMMIT")
+    } catch (e) {
+      await client.query("ROLLBACK")
+      throw e
+    } finally {
+      client.release()
+    }
   }
 }
