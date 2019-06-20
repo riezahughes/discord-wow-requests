@@ -17,12 +17,12 @@ module.exports = {
     }
   },
 
-  listRequests: pool => async () => {
+  listRequests: pool => async user_id => {
     const client = await pool.connect()
 
     try {
-      const requestsQuery = "SELECT * FROM requests"
-      const result = await client.query(requestsQuery)
+      const requestsQuery = "SELECT * FROM requests WHERE user_id = $1"
+      const result = await client.query(requestsQuery, [user_id])
       return result.rows
     } catch {
       throw e
