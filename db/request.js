@@ -1,5 +1,5 @@
 module.exports = {
-  createRequest: async (user_id, item_name, quantity) => {
+  createRequest: pool => async (user_id, item_name, quantity) => {
     const client = await pool.connect()
 
     try {

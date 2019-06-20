@@ -3,5 +3,5 @@ const request = require("./request")
 const pool = new Pool()
 
 module.exports = {
-  createRequest: request.createRequest
+  createRequest: request.createRequest(pool)
 }

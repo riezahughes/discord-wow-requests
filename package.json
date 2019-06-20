@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "create_db": "cross-var createdbjs $DB_NAME --user=$DB_USERNAME --password=$DB_PASSWORD",
-    "destroy_db": "cross-var dropdbjs $DB_NAME --user=$DB_USERNAME --password=$DB_PASSWORD",
+    "create_db": "cross-var createdbjs $PGDATABASE --user=$PGUSER --password=$PGPASSWORD",
+    "destroy_db": "cross-var dropdbjs $PGDATABASE --user=$PGUSER --password=$PGPASSWORD",
     "migrate": "node-pg-migrate"
   },
   "author": "",
