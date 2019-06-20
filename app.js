@@ -1,15 +1,22 @@
+//env setup
 require('dotenv').config()
+//require the discord js libraryr
+const Discord = require('discord.js');
+//create client connection variable
+const client = new Discord.Client();
+
+//functions for dealing with bot requests.
 const request = require('./functions/createRequest');
 const deposit = require('./functions/createDeposit');
 const view = require('./functions/viewRequests');
-const Discord = require('discord.js');
-const client = new Discord.Client();
 
-
+//when the bot boots
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+
+//on a message (by default it checks every channel)
 client.on('message', msg => {
 
     if(!msg.author.bot){
@@ -32,6 +39,8 @@ client.on('message', msg => {
 
         
         if(commandSplit === "!request"){
+            
+
             msg.reply(request.createRequest());
         }
 
@@ -42,4 +51,5 @@ client.on('message', msg => {
     }
 });
 
+//log in the bot via the bot token from discord.
 client.login(process.env.DISCORDBOTTOKEN);

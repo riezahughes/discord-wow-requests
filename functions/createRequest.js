@@ -10,7 +10,10 @@ A response will be given to the user saying the request has been taken.
 
 */
 function createRequest(userid, qty, item){
-    return "Created a Request"
+    return {
+        "id": 1,
+        "success": true
+    }
 }
 
 module.exports.createRequest = createRequest;
