@@ -34,14 +34,15 @@ client.on('message', msg => {
 
         let requestItems = msg.content.substr(msg.content.indexOf(' ')+1);
         
-        let shoppingList = requestItems.split(" ")
-        
+        let shoppingQuantity = requestItems.substr(0,requestItems.indexOf(' '));
+        let shoppingList = requestItems.substr(requestItems.indexOf(' ')+1);
+
         //quick test to show things going through correctly.
         console.log(commandSplit + " of " + requestItems + " from " + msg.member.user.tag + " ( id:" + msg.member.id + " )");
 
         
-        if(commandSplit === "!request" && !isNaN(shoppingList[0])){
-            let runRequest = request.createRequest();
+        if(commandSplit === "!request" && !isNaN(shoppingQuantity)){
+            let runRequest = request.createRequest(msg.member.id, shoppingList,shoppingQuantity);
             if(runRequest.success === true){
 
                 let richembed = 
@@ -62,12 +63,12 @@ client.on('message', msg => {
                   
                           {
                             "name": "Item",
-                            "value": "```Good Cheerios```",
+                            "value": "```"+ shoppingList +"```",
                             "inline": true
                           },
                           {
                             "name": "Quantity Needed:",
-                            "value": "```90```",
+                            "value": "```"+ shoppingQuantity +"```",
                             "inline": true
                           }
                         ]

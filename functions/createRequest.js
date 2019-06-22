@@ -9,9 +9,13 @@ the post will have the ID of the request, what item, who requested it (as a tag)
 A response will be given to the user saying the request has been taken. 
 
 */
-function createRequest(userid, qty, item){
+
+const db = require("../db/index.js")
+
+
+function createRequest(userid, item_name, quantity){
+    db.createRequest(userid, item_name, quantity);
     return {
-        "id": 1,
         "success": true
     }
 }

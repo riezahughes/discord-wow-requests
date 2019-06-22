@@ -7,6 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "create_db": "cross-var createdbjs $PGDATABASE --user=$PGUSER --password=$PGPASSWORD",
     "destroy_db": "cross-var dropdbjs $PGDATABASE --user=$PGUSER --password=$PGPASSWORD",
+    "create_db_win": "cross-env createdbjs discord-wow-request-system --user='postgres' --password='postgres' --host=192.168.99.100",
+    "destroy_db_win": "cross-env dropdbjs PGDATABASE --user=PGUSER --password=PGPASSWORD",
     "migrate": "node-pg-migrate"
   },
   "author": "",
