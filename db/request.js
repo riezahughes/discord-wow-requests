@@ -36,8 +36,11 @@ module.exports = {
 
     try {
       await client.query("BEGIN")
-      const updateQuantity =
-        "UPDATE requests SET current_quantity = current_quantity - $1 WHERE id = $2"
+      const updateQuantity = `UPDATE requests SET current_quantity = (
+          CASE WHEN current_quantity >= $1
+          THEN (current_quantity - $1) 
+          ELSE 0 END
+        ) WHERE id = $2`
       const updateQuantityValues = [request_id, quantity]
       await client.query(updateQuantity, updateQuantityValues)
       await client.query("COMMIT")
