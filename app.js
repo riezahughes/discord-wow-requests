@@ -54,7 +54,7 @@ const myRequestsResponse = (responses) => {
 //when the bot boots
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
-  client.user.setPresence({ game: { name: "With yer maw", type: 0 } })
+  client.user.setPresence({ game: { name: "With Yer Maw", type: 0 } })
 })
 
 //on a message (by default it checks every channel)
@@ -153,6 +153,7 @@ client.on("message", async (msg) => {
         .get(process.env.BOTCHANNEL)
         .fetchMessage(itemdeposit.post_id);
       await deletePost.delete();
+      client.users.get(itemdeposit.user_id).send("Your request for " + itemdeposit.item_name + " has been completed. The job and been deleted on the board. Thanks for using me!");
       msg.reply("Request has been completed. The issuer has been notified. Thank you for the help!");
     } else {
 
