@@ -8,7 +8,7 @@ The bot will respond to the user with a quick summary of whats currently on the 
 
 */
 
-function viewRequests(userid){
+function viewRequests(userid) {
     return "Made it to vewing requests"
 }
 
