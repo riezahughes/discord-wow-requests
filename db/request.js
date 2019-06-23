@@ -1,12 +1,12 @@
 module.exports = {
-  createRequest: (pool) => async (user_id, item_name, quantity) => {
+  createRequest: (pool) => async (user_id, post_id, item_name, quantity) => {
     const client = await pool.connect()
 
     try {
       await client.query("BEGIN")
-      const insertRequest =
-        "INSERT INTO requests(user_id, item_name, initial_quantity, current_quantity) VALUES ($1, $2, $3, $4)"
-      const insertRequestValues = [user_id, item_name, quantity, 0]
+      const insertRequest = `INSERT INTO requests(user_id, post_id, item_name, initial_quantity, current_quantity) 
+          VALUES ($1, $2, $3, $4, $5)`
+      const insertRequestValues = [user_id, post_id, item_name, quantity, 0]
       await client.query(insertRequest, insertRequestValues)
       await client.query("COMMIT")
     } catch (e) {
