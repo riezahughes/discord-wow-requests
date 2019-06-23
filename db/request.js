@@ -50,9 +50,15 @@ module.exports = {
 
     try {
       await client.query("BEGIN")
-      await client.query("SELECT * FROM requests WHERE id = $1 FOR UPDATE", [
-        request_id
-      ])
+      const existsingRequest = await client.query(
+        "SELECT * FROM requests WHERE id = $1 FOR UPDATE",
+        [request_id]
+      )
+
+      if (existsingRequest.rows.length < 1) {
+        throw new Error(`Request id=${request_id} does not exist`)
+      }
+
       const updateQuantity = `UPDATE requests SET current_quantity = (
           CASE WHEN current_quantity + $2 <= initial_quantity
           THEN (current_quantity + $2) 
@@ -60,6 +66,19 @@ module.exports = {
         ) WHERE id = $1`
       const updateQuantityValues = [request_id, quantity]
       await client.query(updateQuantity, updateQuantityValues)
+      const updatedRequest = await client.query(
+        "SELECT * FROM requests WHERE id = $1 FOR UPDATE",
+        [request_id]
+      )
+
+      const request = updatedRequest.rows[0]
+      if (request.current_quantity === request.initial_quantity) {
+        await client.query(
+          "UPDATE requests SET fulfilled_at = current_timestamp WHERE id = $1",
+          [request_id]
+        )
+      }
+
       await client.query("COMMIT")
     } catch (e) {
       await client.query("ROLLBACK")
