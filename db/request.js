@@ -31,6 +31,20 @@ module.exports = {
     }
   },
 
+  listAllRequests: (pool) => async () => {
+    const client = await pool.connect()
+
+    try {
+      const requestsQuery = "SELECT * FROM requests"
+      const result = await client.query(requestsQuery)
+      return result.rows
+    } catch {
+      throw e
+    } finally {
+      client.release()
+    }
+  },
+
   depositRequest: (pool) => async (request_id, quantity) => {
     const client = await pool.connect()
 
