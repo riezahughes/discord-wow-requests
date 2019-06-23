@@ -42,6 +42,15 @@ const createEmbed = (
   ]
 })
 
+const myRequestsResponse = (responses) => {
+  return responses
+    .map(
+      ({ current_quantity, initial_quantity, item_name }) =>
+        `${current_quantity} / ${initial_quantity} of ${item_name} collected.`
+    )
+    .join("\n")
+}
+
 //when the bot boots
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
@@ -58,22 +67,12 @@ client.on("message", async (msg) => {
 
   //if it's just checking requests
   if (content.toLowerCase() === "!myrequests") {
-    let userResponse = ""
     const viewResponse = await view.viewRequests(member.id)
+    let userResponse = ""
     if (!viewResponse) {
       msg.reply("You don't have any pending requests at this time.")
     } else {
-      userResponse = "```Current Requests```"
-      for (i = 0; i < viewResponse.length; i++) {
-        userResponse +=
-          viewResponse[i].current_quantity +
-          " / " +
-          viewResponse[i].initial_quantity +
-          " of " +
-          viewResponse[i].item_name +
-          " " +
-          "collected.\n"
-      }
+      userResponse = myRequestsResponse(viewResponse)
       msg.reply(userResponse)
     }
   }
@@ -144,14 +143,16 @@ client.on("message", async (msg) => {
   }
 
   if (commandSplit === "!deposit") {
-    const itemdeposit = await deposit.createDeposit(shoppingList, shoppingQuantity);
-    console.log(itemdeposit);
+    const itemdeposit = await deposit.createDeposit(
+      shoppingList,
+      shoppingQuantity
+    )
+    console.log(itemdeposit)
     if (itemdeposit.fulfilled === true) {
-      msg.reply("completed");
+      msg.reply("completed")
     } else {
-      msg.reply("more to go");
+      msg.reply("more to go")
     }
-
   }
 })
 
