@@ -11,8 +11,11 @@ If it is not, then the value is updated in the db row. The user is told how much
 
 */
 
-function createDeposit(quantity, requestid){
-    return "Made it to deposit"
+const db = require("../db")
+
+const createDeposit = async (post_id, quantity) => {
+    const dbinsert = await db.depositRequest(post_id, quantity);
+    return dbinsert;
 }
 
 module.exports.createDeposit = createDeposit;

@@ -22,7 +22,7 @@ module.exports = {
     const client = await pool.connect()
 
     try {
-      const requestsQuery = "SELECT * FROM requests WHERE user_id = $1"
+      const requestsQuery = "SELECT * FROM requests WHERE user_id = $1 AND fulfilled_at IS NULL"
       const result = await client.query(requestsQuery, [user_id])
       return result.rows
     } catch {

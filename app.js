@@ -50,7 +50,7 @@ client.on("ready", () => {
 //on a message (by default it checks every channel)
 client.on("message", async (msg) => {
   if (!msg.author.bot) {
-    //msg.content.includes
+
     //if it's just checking requests
     if (msg.content.toLowerCase() === "!myrequests") {
       let userResponse = ""
@@ -85,16 +85,16 @@ client.on("message", async (msg) => {
     let shoppingList = requestItems.substr(requestItems.indexOf(" ") + 1)
 
     //quick test to show things going through correctly.
-    console.log(
-      commandSplit +
-      " of " +
-      requestItems +
-      " from " +
-      msg.member.user.tag +
-      " ( id:" +
-      msg.member.id +
-      " )"
-    )
+    // console.log(
+    //   commandSplit +
+    //   " of " +
+    //   requestItems +
+    //   " from " +
+    //   msg.member.user.tag +
+    //   " ( id:" +
+    //   msg.member.id +
+    //   " )"
+    // )
 
     if (commandSplit === "!request" && !isNaN(shoppingQuantity)) {
       const setupMessage = await client.channels
@@ -139,7 +139,7 @@ client.on("message", async (msg) => {
     }
 
     if (commandSplit === "!deposit") {
-      msg.reply(deposit.createDeposit())
+      msg.reply(deposit.createDeposit(shoppingList, shoppingQuantity));
     }
   }
 })
