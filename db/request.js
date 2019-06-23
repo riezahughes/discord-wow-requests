@@ -5,7 +5,7 @@ module.exports = {
     try {
       await client.query("BEGIN")
       const insertRequest = `INSERT INTO requests(user_id, post_id, item_name, initial_quantity, current_quantity) 
-          VALUES ($1, $2, $3, $4, $5) RETURNING *`
+          VALUES ($1, $2, $3, $4, $5)`
       const insertRequestValues = [user_id, post_id, item_name, quantity, 0]
       await client.query(insertRequest, insertRequestValues)
       await client.query("COMMIT")
