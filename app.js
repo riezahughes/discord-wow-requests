@@ -142,7 +142,14 @@ client.on("message", async (msg) => {
   }
 
   if (commandSplit === "!deposit") {
-    msg.reply(deposit.createDeposit(shoppingList, shoppingQuantity))
+    const itemdeposit = await deposit.createDeposit(shoppingList, shoppingQuantity);
+    console.log(itemdeposit);
+    if (itemdeposit.fulfilled === true) {
+      msg.reply("completed");
+    } else {
+      msg.reply("more to go");
+    }
+
   }
 })
 
