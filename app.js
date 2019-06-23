@@ -121,13 +121,27 @@ client.on("message", async (msg) => {
           shoppingQuantity
         )
 
-        const message = await msg.channel.fetchMessage(setupMessage.id)
-        await message.edit(richembed)
+        console.log(setupMessage.id)
 
-        let returnResponse = "Request Created! :id:: ` " + runRequest.id + " `"
-        msg.reply(
-          `${returnResponse}! Check <#${process.env.BOTCHANNEL}> for post`
-        )
+        try {
+          // const messages = await msg.channel.fetchMessages()
+          // console.log(messages.map(({ id }) => id))
+
+          const message = await client.channels
+            .get(process.env.BOTCHANNEL)
+            .fetchMessage(setupMessage.id)
+
+          await message.edit(richembed)
+
+          //   const returnResponse =
+          const returnResponse =
+            "Request Created! :id:: ` " + runRequest.id + " `"
+          msg.reply(
+            `${returnResponse}! Check <#${process.env.BOTCHANNEL}> for post`
+          )
+        } catch (e) {
+          console.error(e)
+        }
       } else {
         msg.reply("Format incorrect. Please try again. `!request [qty] [item]`")
       }
