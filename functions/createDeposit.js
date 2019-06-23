@@ -11,7 +11,7 @@ If it is not, then the value is updated in the db row. The user is told how much
 
 */
 
-function createDeposit(requestid, item, quantity){
+function createDeposit(quantity, requestid){
     return "Made it to deposit"
 }
 
