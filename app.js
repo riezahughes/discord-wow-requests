@@ -149,9 +149,15 @@ client.on("message", async (msg) => {
     )
     console.log(itemdeposit)
     if (itemdeposit.fulfilled === true) {
-      msg.reply("completed")
+      msg.reply(
+        "Request has been completed. The issuer has been notified. Thank you for the help!"
+      )
     } else {
-      msg.reply("more to go")
+      msg.reply(
+        "Thank you for the help. There is currently " +
+          itemdeposit.to_go +
+          " more to go!"
+      )
     }
   }
 })
