@@ -55,7 +55,6 @@ client.on("message", async (msg) => {
     if (msg.content.toLowerCase() === "!myrequests") {
       let userResponse = ""
       const viewResponse = await view.viewRequests(msg.member.id)
-
       if (!viewResponse) {
         msg.reply("You don't have any pending requests at this time.")
       } else {
@@ -64,7 +63,7 @@ client.on("message", async (msg) => {
           userResponse +=
             viewResponse[i].current_quantity +
             " / " +
-            viewResponse[i].current_quantity +
+            viewResponse[i].initial_quantity +
             " of " +
             viewResponse[i].item_name +
             " " +
