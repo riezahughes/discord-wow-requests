@@ -75,7 +75,7 @@ module.exports = {
 
       const request = updatedRequest.rows[0]
       const fulfilled = request.current_quantity === request.initial_quantity
-      const to_go = request.initial_quantity - request.current_quantity;
+      const to_go = request.initial_quantity - request.current_quantity
       if (fulfilled) {
         await client.query(
           "UPDATE requests SET fulfilled_at = current_timestamp WHERE id = $1",
