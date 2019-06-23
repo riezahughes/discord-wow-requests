@@ -23,7 +23,13 @@ client.on('message', msg => {
         //msg.content.includes
         //if it's just checking requests
         if(msg.content.toLowerCase() === "!myrequests"){
-            msg.reply(view.viewRequests());
+
+            const response = await view.viewRequests(msg.member.id);
+            
+            console.log(response);
+
+            msg.reply(response);
+
         }
 
         //otherwise take the string that the user has entered. Split it into two pieces. The command and the items/values
@@ -88,6 +94,7 @@ client.on('message', msg => {
         if(commandSplit === "!deposit"){
             msg.reply(deposit.createDeposit());
         }
+        
 
     }
 });
