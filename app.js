@@ -149,15 +149,27 @@ client.on("message", async (msg) => {
     )
     console.log(itemdeposit)
     if (itemdeposit.fulfilled === true) {
-      msg.reply(
-        "Request has been completed. The issuer has been notified. Thank you for the help!"
-      )
+      deletePost = await client.channels
+        .get(process.env.BOTCHANNEL)
+        .fetchMessage(itemdeposit.post_id);
+      await deletePost.delete();
+      msg.reply("Request has been completed. The issuer has been notified. Thank you for the help!");
     } else {
-      msg.reply(
-        "Thank you for the help. There is currently " +
-          itemdeposit.to_go +
-          " more to go!"
+
+      const message = await client.channels
+        .get(process.env.BOTCHANNEL)
+        .fetchMessage(itemdeposit.post_id)
+
+      const richembed = createEmbed(
+        itemdeposit.post_id,
+        itemdeposit.user_id,
+        itemdeposit.item_name,
+        itemdeposit.to_go
       )
+
+      await message.edit({ embed: richembed })
+
+      msg.reply("Thank you for the help. There is currently " + itemdeposit.to_go + " more to go!");
     }
   }
 })

@@ -85,7 +85,7 @@ module.exports = {
 
       await client.query("COMMIT")
 
-      return { fulfilled, user_id: request.user_id, to_go: to_go }
+      return { fulfilled, item_name: request.item_name, user_id: request.user_id, post_id: request.post_id, to_go: to_go }
     } catch (e) {
       await client.query("ROLLBACK")
       throw e
