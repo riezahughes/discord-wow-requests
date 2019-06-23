@@ -56,7 +56,7 @@ client.on("message", async (msg) => {
       let userResponse = ""
       const viewResponse = await view.viewRequests(msg.member.id)
 
-      if (!viewResponse.length) {
+      if (!viewResponse) {
         msg.reply("You don't have any pending requests at this time.")
       } else {
         userResponse = "```Current Requests```"
@@ -88,21 +88,19 @@ client.on("message", async (msg) => {
     //quick test to show things going through correctly.
     console.log(
       commandSplit +
-        " of " +
-        requestItems +
-        " from " +
-        msg.member.user.tag +
-        " ( id:" +
-        msg.member.id +
-        " )"
+      " of " +
+      requestItems +
+      " from " +
+      msg.member.user.tag +
+      " ( id:" +
+      msg.member.id +
+      " )"
     )
 
     if (commandSplit === "!request" && !isNaN(shoppingQuantity)) {
       const setupMessage = await client.channels
         .get(process.env.BOTCHANNEL)
         .send("[processing]")
-
-      console.dir("!!!!!!! " + setupMessage.id + " !!!!")
 
       const runRequest = await request.createRequest(
         msg.member.id,
@@ -115,27 +113,21 @@ client.on("message", async (msg) => {
         console.log(runRequest)
 
         const richembed = createEmbed(
-          setupMessage.id,
+          runRequest[0].id,
           msg.member.id,
           shoppingList,
           shoppingQuantity
         )
 
-        console.log(setupMessage.id)
-
         try {
-          // const messages = await msg.channel.fetchMessages()
-          // console.log(messages.map(({ id }) => id))
 
           const message = await client.channels
             .get(process.env.BOTCHANNEL)
             .fetchMessage(setupMessage.id)
 
-          await message.edit(richembed)
+          await message.edit({ embed: richembed })
 
-          //   const returnResponse =
-          const returnResponse =
-            "Request Created! :id:: ` " + runRequest.id + " `"
+          const returnResponse = "Request Created! :id:: ` " + runRequest[0].id + " `"
           msg.reply(
             `${returnResponse}! Check <#${process.env.BOTCHANNEL}> for post`
           )
