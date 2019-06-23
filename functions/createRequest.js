@@ -12,11 +12,8 @@ A response will be given to the user saying the request has been taken.
 
 const db = require("../db")
 
-
-
 const createRequest = async (userid, post_id, item_name, quantity) => {
-    const dbinsert = await db.createRequest(userid, post_id, item_name, quantity);
-    return dbinsert;
+  return db.createRequest(userid, post_id, item_name, quantity)
 }
 
-module.exports.createRequest = createRequest;
+module.exports.createRequest = createRequest
