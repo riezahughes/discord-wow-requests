@@ -6,7 +6,7 @@ module.exports = {
       await client.query("BEGIN")
       const insertRequest =
         "INSERT INTO requests(user_id, item_name, intial_quantity, current_quantity) VALUES ($1, $2, $3, $4)"
-      const insertRequestValues = [user_id, item_name, quantity, quantity]
+      const insertRequestValues = [user_id, item_name, quantity, 0]
       await client.query(insertRequest, insertRequestValues)
       await client.query("COMMIT")
     } catch (e) {
@@ -51,9 +51,9 @@ module.exports = {
     try {
       await client.query("BEGIN")
       const updateQuantity = `UPDATE requests SET current_quantity = (
-          CASE WHEN current_quantity >= $1
-          THEN (current_quantity - $1) 
-          ELSE 0 END
+          CASE WHEN current_quantity + $1 <= intial_quantity
+          THEN (current_quantity + $1) 
+          ELSE intial_quantity END
         ) WHERE id = $2`
       const updateQuantityValues = [request_id, quantity]
       await client.query(updateQuantity, updateQuantityValues)
