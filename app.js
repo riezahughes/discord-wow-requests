@@ -45,8 +45,8 @@ const createEmbed = (
 const myRequestsResponse = (responses) => {
   return responses
     .map(
-      ({ current_quantity, initial_quantity, item_name }) =>
-        `${current_quantity} / ${initial_quantity} of ${item_name} collected.`
+      ({ current_quantity, initial_quantity, item_name, id }) =>
+        `ID:${id} ${current_quantity} / ${initial_quantity} of ${item_name} collected.`
     )
     .join("\n")
 }
