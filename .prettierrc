@@ -6,5 +6,6 @@
   "trailingComma": "none",
   "jsxBracketSameLine": false,
   "semi": false,
-  "rcVerbose": true
+  "rcVerbose": true,
+  "arrowParens": "always"
 }
