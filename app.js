@@ -54,10 +54,12 @@ client.on("message", async (msg) => {
     return
   }
 
+  const { content, member } = msg
+
   //if it's just checking requests
-  if (msg.content.toLowerCase() === "!myrequests") {
+  if (content.toLowerCase() === "!myrequests") {
     let userResponse = ""
-    const viewResponse = await view.viewRequests(msg.member.id)
+    const viewResponse = await view.viewRequests(member.id)
     if (!viewResponse) {
       msg.reply("You don't have any pending requests at this time.")
     } else {
@@ -79,10 +81,10 @@ client.on("message", async (msg) => {
   //otherwise take the string that the user has entered. Split it into two pieces. The command and the items/values
   //Make the command lowercase for easy checks.
 
-  let commandSplit = msg.content.substr(0, msg.content.indexOf(" "))
+  let commandSplit = content.substr(0, content.indexOf(" "))
   commandSplit = commandSplit.toLowerCase()
 
-  let requestItems = msg.content.substr(msg.content.indexOf(" ") + 1)
+  let requestItems = content.substr(content.indexOf(" ") + 1)
 
   let shoppingQuantity = requestItems.substr(0, requestItems.indexOf(" "))
   let shoppingList = requestItems.substr(requestItems.indexOf(" ") + 1)
@@ -93,9 +95,9 @@ client.on("message", async (msg) => {
   //   " of " +
   //   requestItems +
   //   " from " +
-  //   msg.member.user.tag +
+  //   member.user.tag +
   //   " ( id:" +
-  //   msg.member.id +
+  //   member.id +
   //   " )"
   // )
 
@@ -105,7 +107,7 @@ client.on("message", async (msg) => {
       .send("[processing]")
 
     const runRequest = await request.createRequest(
-      msg.member.id,
+      member.id,
       setupMessage.id,
       shoppingList,
       shoppingQuantity
@@ -116,7 +118,7 @@ client.on("message", async (msg) => {
 
       const richembed = createEmbed(
         runRequest[0].id,
-        msg.member.id,
+        member.id,
         shoppingList,
         shoppingQuantity
       )
