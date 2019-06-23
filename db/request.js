@@ -1,5 +1,5 @@
 module.exports = {
-  createRequest: pool => async (user_id, item_name, quantity) => {
+  createRequest: (pool) => async (user_id, item_name, quantity) => {
     const client = await pool.connect()
 
     try {
@@ -17,7 +17,7 @@ module.exports = {
     }
   },
 
-  listRequests: pool => async user_id => {
+  listRequests: (pool) => async (user_id) => {
     const client = await pool.connect()
 
     try {
@@ -31,7 +31,7 @@ module.exports = {
     }
   },
 
-  depositRequest: pool => async (request_id, quantity) => {
+  depositRequest: (pool) => async (request_id, quantity) => {
     const client = await pool.connect()
 
     try {
@@ -40,6 +40,23 @@ module.exports = {
         "UPDATE requests SET current_quantity = current_quantity - $1 WHERE id = $2"
       const updateQuantityValues = [request_id, quantity]
       await client.query(updateQuantity, updateQuantityValues)
+      await client.query("COMMIT")
+    } catch (e) {
+      await client.query("ROLLBACK")
+      throw e
+    } finally {
+      client.release()
+    }
+  },
+
+  deleteRequest: (pool) => async (request_id) => {
+    const client = await pool.connect()
+
+    try {
+      await client.query("BEGIN")
+      const deleteQuery = "DELETE FROM requests WHERE id = $1"
+      const deleteQueryValues = [request_id]
+      await client.query(deleteQuery, deleteQueryValues)
       await client.query("COMMIT")
     } catch (e) {
       await client.query("ROLLBACK")
