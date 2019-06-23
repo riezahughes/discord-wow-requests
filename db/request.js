@@ -22,7 +22,8 @@ module.exports = {
     const client = await pool.connect()
 
     try {
-      const requestsQuery = "SELECT * FROM requests WHERE user_id = $1 AND fulfilled_at IS NULL"
+      const requestsQuery =
+        "SELECT * FROM requests WHERE user_id = $1 AND fulfilled_at IS NULL"
       const result = await client.query(requestsQuery, [user_id])
       return result.rows
     } catch {
@@ -73,7 +74,8 @@ module.exports = {
       )
 
       const request = updatedRequest.rows[0]
-      if (request.current_quantity === request.initial_quantity) {
+      const fulfilled = request.current_quantity === request.initial_quantity
+      if (fulfilled) {
         await client.query(
           "UPDATE requests SET fulfilled_at = current_timestamp WHERE id = $1",
           [request_id]
@@ -81,6 +83,8 @@ module.exports = {
       }
 
       await client.query("COMMIT")
+
+      return { fulfilled }
     } catch (e) {
       await client.query("ROLLBACK")
       throw e
