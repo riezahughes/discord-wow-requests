@@ -10,14 +10,13 @@ A response will be given to the user saying the request has been taken.
 
 */
 
-const db = require("../db/index.js")
+const db = require("../db")
 
 
-function createRequest(userid, item_name, quantity){
-    db.createRequest(userid, item_name, quantity);
-    return {
-        "success": true
-    }
+
+const createRequest = async (userid, post_id, item_name, quantity) => {
+    const dbinsert = await db.createRequest(userid, post_id, item_name, quantity);
+    return dbinsert;
 }
 
 module.exports.createRequest = createRequest;
