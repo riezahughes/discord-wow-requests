@@ -45,6 +45,7 @@ const createEmbed = (
 //when the bot boots
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`)
+  client.user.setPresence({ game: { name: "With yer maw", type: 0 } });
 })
 
 //on a message (by default it checks every channel)
