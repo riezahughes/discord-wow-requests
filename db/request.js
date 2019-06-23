@@ -5,10 +5,11 @@ module.exports = {
     try {
       await client.query("BEGIN")
       const insertRequest = `INSERT INTO requests(user_id, post_id, item_name, initial_quantity, current_quantity) 
-          VALUES ($1, $2, $3, $4, $5)`
+          VALUES ($1, $2, $3, $4, $5) RETURNING id`
       const insertRequestValues = [user_id, post_id, item_name, quantity, 0]
-      await client.query(insertRequest, insertRequestValues)
+      const result = await client.query(insertRequest, insertRequestValues)
       await client.query("COMMIT")
+      return result.rows
     } catch (e) {
       await client.query("ROLLBACK")
       throw e
