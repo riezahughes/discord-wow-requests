@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
   app:
     build:
@@ -6,11 +6,9 @@ services:
     env_file: .env
     depends_on:
       - db
-    # command: sh -c "./wait-for db:5432 -- echo ready"
+    command: sh -c "./wait-for db:5432 -- npm run create_db && npm run migrate up && npm start"
   db:
     image: postgres
-    ports:
-      - 5432:5432
     environment:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
     volumes:
