@@ -9,33 +9,40 @@ const client = new Discord.Client()
 const request = require("./functions/createRequest")
 const deposit = require("./functions/createDeposit")
 const view = require("./functions/viewRequests")
+const update = require("./functions/updateRequest");
 
 const createEmbed = (
   setupMessageId,
   memberId,
   shoppingList,
-  shoppingQuantity
+  shoppingQuantity,
+  shoppingMax
 ) => ({
-  title: `:id: \`${setupMessageId}\` - New Request From: `,
-  description: `\n\n<@${memberId}>`,
+  title: `:id: \`${setupMessageId}\` - A New Item Request Is Now Available.`,
+  description: `Request From: <@${memberId}>`,
   color: 5508893,
   timestamp: "2019-06-20T22:07:57.142Z",
   footer: {
-    icon_url: "https://cdn.discordapp.com/embed/avatars/0.png",
+    icon_url: "https://odealo.com/uploads/auction_images//9746195585c17934d35039.png",
     text: "Be excellent to each other"
   },
   thumbnail: {
-    url: "https://cdn.discordapp.com/embed/avatars/0.png"
+    url: "https://odealo.com/uploads/auction_images//9746195585c17934d35039.png"
   },
 
   fields: [
     {
       name: "Item",
       value: `\`\`\`${shoppingList}\`\`\``,
+      inline: false
+    },
+    {
+      name: "Quantity Required:",
+      value: `\`\`\`${shoppingMax}\`\`\``,
       inline: true
     },
     {
-      name: "Quantity Needed:",
+      name: "Quantity Left:",
       value: `\`\`\`${shoppingQuantity}\`\`\``,
       inline: true
     }
@@ -73,7 +80,7 @@ client.on("message", async (msg) => {
       msg.reply("You don't have any pending requests at this time.")
     } else {
       userResponse = myRequestsResponse(viewResponse)
-      msg.reply(userResponse)
+      msg.reply("**Your Current Requests:**```" + userResponse + "```")
     }
   }
 
@@ -119,6 +126,7 @@ client.on("message", async (msg) => {
         runRequest[0].id,
         member.id,
         shoppingList,
+        shoppingQuantity,
         shoppingQuantity
       )
 
@@ -142,6 +150,30 @@ client.on("message", async (msg) => {
     }
   }
 
+  if (commandSplit === "!updaterequest") {
+    const itemupdate = await update.updateRequest(
+      shoppingList,
+      shoppingQuantity
+    )
+
+    const message = await client.channels
+      .get(process.env.BOTCHANNEL)
+      .fetchMessage(itemupdate.post_id)
+
+    const richembed = createEmbed(
+      itemupdate.request_id,
+      itemupdate.user_id,
+      itemupdate.item_name,
+      itemupdate.to_go,
+      itemupdate.request_max
+    )
+
+    await message.edit({ embed: richembed })
+
+    msg.reply("Update successful. There are now currently " + itemupdate.to_go + " " + itemupdate.item_name + " to go!");
+
+  }
+
   if (commandSplit === "!deposit") {
     const itemdeposit = await deposit.createDeposit(
       shoppingList,
@@ -162,10 +194,11 @@ client.on("message", async (msg) => {
         .fetchMessage(itemdeposit.post_id)
 
       const richembed = createEmbed(
-        itemdeposit.post_id,
+        itemdeposit.request_id,
         itemdeposit.user_id,
         itemdeposit.item_name,
-        itemdeposit.to_go
+        itemdeposit.to_go,
+        itemdeposit.request_max
       )
 
       await message.edit({ embed: richembed })

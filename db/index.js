@@ -7,5 +7,6 @@ module.exports = {
   listRequests: request.listRequests(pool),
   listAllRequests: request.listAllRequests(pool),
   depositRequest: request.depositRequest(pool),
-  deleteRequest: request.deleteRequest(pool)
+  deleteRequest: request.deleteRequest(pool),
+  updateRequest: request.updateRequest(pool)
 }

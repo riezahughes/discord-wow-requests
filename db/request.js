@@ -85,7 +85,7 @@ module.exports = {
 
       await client.query("COMMIT")
 
-      return { fulfilled, item_name: request.item_name, user_id: request.user_id, post_id: request.post_id, to_go: to_go }
+      return { fulfilled, request_id: request.id, request_max: request.initial_quantity, item_name: request.item_name, user_id: request.user_id, post_id: request.post_id, to_go: to_go }
     } catch (e) {
       await client.query("ROLLBACK")
       throw e
@@ -93,7 +93,40 @@ module.exports = {
       client.release()
     }
   },
+  updateRequest: (pool) => async (request_id, quantity) => {
+    const client = await pool.connect()
 
+    try {
+      await client.query("BEGIN")
+      const existsingRequest = await client.query(
+        "SELECT * FROM requests WHERE id = $1 FOR UPDATE",
+        [request_id]
+      )
+
+      if (existsingRequest.rows.length < 1) {
+        throw new Error(`Request id=${request_id} does not exist`)
+      }
+
+      const updateQuantity = `UPDATE requests SET initial_quantity = $2 WHERE id = $1`
+      const updateQuantityValues = [request_id, quantity]
+      await client.query(updateQuantity, updateQuantityValues)
+      const updatedRequest = await client.query(
+        "SELECT * FROM requests WHERE id = $1 FOR UPDATE",
+        [request_id]
+      )
+
+      const request = updatedRequest.rows[0]
+      const to_go = request.initial_quantity - request.current_quantity
+      await client.query("COMMIT")
+
+      return { request_id: request.id, request_max: request.initial_quantity, item_name: request.item_name, user_id: request.user_id, post_id: request.post_id, to_go: to_go }
+    } catch (e) {
+      await client.query("ROLLBACK")
+      throw e
+    } finally {
+      client.release()
+    }
+  },
   deleteRequest: (pool) => async (request_id) => {
     const client = await pool.connect()
 
