@@ -16,38 +16,55 @@ const createEmbed = (
   memberId,
   shoppingList,
   shoppingQuantity,
-  shoppingMax
-) => ({
-  title: `:id: \`${setupMessageId}\` - A New Item Request Is Now Available.`,
-  description: `Request From: <@${memberId}>`,
-  color: 5508893,
-  timestamp: "2019-06-20T22:07:57.142Z",
-  footer: {
-    icon_url: "https://odealo.com/uploads/auction_images//9746195585c17934d35039.png",
-    text: "Be excellent to each other"
-  },
-  thumbnail: {
-    url: "https://odealo.com/uploads/auction_images//9746195585c17934d35039.png"
-  },
+  shoppingMax,
+) => {
+  const shoppingDif = shoppingQuantity / shoppingMax;
+  let markup = "";
 
-  fields: [
-    {
-      name: "Item",
-      value: `\`\`\`${shoppingList}\`\`\``,
-      inline: false
+  if (shoppingDif > 0.666) {
+    markup = "yaml"
+  }
+
+  if (shoppingDif < 0.666 && shoppingDif > 0.333) {
+    markup = "fix"
+  }
+
+  if (shoppingDif < 0.333) {
+    markup = "brainfuck"
+  }
+
+  return {
+    title: `:id: \`${setupMessageId}\` - A New Item Request Is Now Available.`,
+    description: `Request From: <@${memberId}>`,
+    color: 5508893,
+    timestamp: "2019-06-20T22:07:57.142Z",
+    footer: {
+      icon_url: "https://odealo.com/uploads/auction_images//9746195585c17934d35039.png",
+      text: "Be excellent to each other"
     },
-    {
-      name: "Quantity Required:",
-      value: `\`\`\`${shoppingMax}\`\`\``,
-      inline: true
+    thumbnail: {
+      url: "https://odealo.com/uploads/auction_images//9746195585c17934d35039.png"
     },
-    {
-      name: "Quantity Left:",
-      value: `\`\`\`${shoppingQuantity}\`\`\``,
-      inline: true
-    }
-  ]
-})
+
+    fields: [
+      {
+        name: "Item",
+        value: `\`\`\`CSS\n${shoppingList}\n\`\`\``,
+        inline: false
+      },
+      {
+        name: "Quantity Required:",
+        value: `\`\`\`yaml\n${shoppingMax}\n\`\`\``,
+        inline: true
+      },
+      {
+        name: "Quantity Left:",
+        value: `\`\`\`${markup}\n${shoppingQuantity}\n\`\`\``,
+        inline: true
+      }
+    ]
+  }
+}
 
 const myRequestsResponse = (responses) => {
   return responses
