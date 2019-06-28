@@ -37,7 +37,7 @@ module.exports = {
     const client = await pool.connect()
 
     try {
-      const requestsQuery = "SELECT * FROM requests"
+      const requestsQuery = "SELECT * FROM requests ORDER BY id DESC LIMIT 25"
       const result = await client.query(requestsQuery)
       return result.rows
     } catch {
@@ -129,15 +129,29 @@ module.exports = {
   },
   deleteRequest: (pool) => async (request_id) => {
     const client = await pool.connect()
-
+    //console.log("connected");
     try {
+      //console.log("trycatch");
       await client.query("BEGIN")
+      const existingRequest = await client.query(
+        "SELECT * FROM requests WHERE id = $1",
+        [request_id]
+      )
+      //console.log("request id:" + request_id);
+      if (existingRequest.rows.length < 1) {
+        throw new Error(`Request id=${request_id} does not exist`)
+      }
+
       const deleteQuery = "DELETE FROM requests WHERE id = $1"
       const deleteQueryValues = [request_id]
       await client.query(deleteQuery, deleteQueryValues)
       await client.query("COMMIT")
+      //console.log(existingRequest.rows);
+      return { fulfilled: true, post_id: existingRequest.rows[0].post_id }
     } catch (e) {
+      //console.log(e);
       await client.query("ROLLBACK")
+      return { fulfilled: false }
       throw e
     } finally {
       client.release()

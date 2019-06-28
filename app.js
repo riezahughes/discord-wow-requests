@@ -6,10 +6,12 @@ const Discord = require("discord.js")
 const client = new Discord.Client()
 
 //functions for dealing with bot requests.
-const request = require("./functions/createRequest")
-const deposit = require("./functions/createDeposit")
-const view = require("./functions/viewRequests")
+const request = require("./functions/createRequest");
+const deposit = require("./functions/createDeposit");
+const view = require("./functions/viewRequests");
+const viewall = require("./functions/viewallRequests");
 const update = require("./functions/updateRequest");
+const del = require("./functions/deleteRequest");
 
 const createEmbed = (
   setupMessageId,
@@ -86,18 +88,52 @@ client.on("message", async (msg) => {
   if (msg.author.bot) {
     return
   }
+  if (msg.guild === null) {
+    return
+  }
 
-  const { content, member } = msg
+  const checkRole = msg.member.roles.some(role => role.name === 'Booty Wench');
 
+
+  let { content, member } = msg
+  content = content.toLowerCase();
   //if it's just checking requests
-  if (content.toLowerCase() === "!myrequests") {
+  if (content === "!myrequests" && checkRole) {
     const viewResponse = await view.viewRequests(member.id)
     let userResponse = ""
-    if (!viewResponse) {
-      msg.reply("You don't have any pending requests at this time.")
+    //console.log(viewResponse.length);
+    if (viewResponse.length === 0) {
+      client.users.get(member.id).send("You don't have any pending requests at this time.")
     } else {
       userResponse = myRequestsResponse(viewResponse)
-      msg.reply("**Your Current Requests:**```" + userResponse + "```")
+      client.users.get(member.id).send("**Your Current Requests:**```" + userResponse + "```")
+    }
+  }
+
+  if (content === "!viewall" && checkRole) {
+    const viewallResponse = await viewall.viewallRequests(member.id)
+    //console.log(viewResponse.length);
+    if (!viewallResponse) {
+      client.users.get(member.id).send("Sorry, none available.");
+    } else {
+      userResponse = myRequestsResponse(viewallResponse)
+      client.users.get(member.id).send("**All Requests:**```" + userResponse + "```");
+    }
+  }
+
+  if (content.includes("!deleterequest") && checkRole) {
+    let requestId = content.substr(content.indexOf(" ") + 1)
+    console.log(requestId);
+    const deleteResponse = await del.deleteRequest(requestId);
+    console.log(deleteResponse);
+    if (deleteResponse.fulfilled) {
+      const message = await client.channels
+        .get(process.env.BOTCHANNEL)
+        .fetchMessage(deleteResponse.post_id)
+      await message.delete();
+      msg.reply("Request has been deleted. Thanks for letting me know!");
+    } else {
+      msg.reply("Nothing to delete. Check your `ID`!");
     }
   }
 
@@ -124,7 +160,7 @@ client.on("message", async (msg) => {
   //   " )"
   // )
 
-  if (commandSplit === "!request" && !isNaN(shoppingQuantity)) {
+  if (commandSplit === "!request" && !isNaN(shoppingQuantity) && checkRole) {
     const setupMessage = await client.channels
       .get(process.env.BOTCHANNEL)
       .send("[processing]")
@@ -137,7 +173,7 @@ client.on("message", async (msg) => {
     )
 
     if (runRequest) {
-      console.log(runRequest)
+      //console.log(runRequest)
 
       const richembed = createEmbed(
         runRequest[0].id,
@@ -159,6 +195,7 @@ client.on("message", async (msg) => {
         msg.reply(
           `${returnResponse}! Check <#${process.env.BOTCHANNEL}> for post`
         )
+        message.pin();
       } catch (e) {
         console.error(e)
       }
@@ -167,7 +204,7 @@ client.on("message", async (msg) => {
     }
   }
 
-  if (commandSplit === "!updaterequest") {
+  if (commandSplit === "!urequest" && checkRole) {
     const itemupdate = await update.updateRequest(
       shoppingList,
       shoppingQuantity
@@ -196,7 +233,7 @@ client.on("message", async (msg) => {
       shoppingList,
       shoppingQuantity
     )
-    console.log(itemdeposit)
+    //console.log(itemdeposit)
     if (itemdeposit.fulfilled === true) {
       deletePost = await client.channels
         .get(process.env.BOTCHANNEL)
