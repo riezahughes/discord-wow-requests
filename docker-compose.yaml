@@ -9,6 +9,7 @@ services:
     command: sh -c "./wait-for db:5432 -t 10 -- echo $PGHOST && npm run create_db && npm run migrate up && npm start"
   db:
     image: postgres
+    env_file: .env
     environment:
       POSTGRES_PASSWORD: $PGPASSWORD
     volumes:
