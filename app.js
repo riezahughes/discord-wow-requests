@@ -6,41 +6,67 @@ const Discord = require("discord.js")
 const client = new Discord.Client()
 
 //functions for dealing with bot requests.
-const request = require("./functions/createRequest")
-const deposit = require("./functions/createDeposit")
-const view = require("./functions/viewRequests")
+const request = require("./functions/createRequest");
+const deposit = require("./functions/createDeposit");
+const view = require("./functions/viewRequests");
+const viewall = require("./functions/viewallRequests");
+const update = require("./functions/updateRequest");
+const del = require("./functions/deleteRequest");
 
 const createEmbed = (
   setupMessageId,
   memberId,
   shoppingList,
-  shoppingQuantity
-) => ({
-  title: `:id: \`${setupMessageId}\` - New Request From: `,
-  description: `\n\n<@${memberId}>`,
-  color: 5508893,
-  timestamp: "2019-06-20T22:07:57.142Z",
-  footer: {
-    icon_url: "https://cdn.discordapp.com/embed/avatars/0.png",
-    text: "Be excellent to each other"
-  },
-  thumbnail: {
-    url: "https://cdn.discordapp.com/embed/avatars/0.png"
-  },
+  shoppingQuantity,
+  shoppingMax,
+) => {
+  const shoppingDif = shoppingQuantity / shoppingMax;
+  let markup = "";
 
-  fields: [
-    {
-      name: "Item",
-      value: `\`\`\`${shoppingList}\`\`\``,
-      inline: true
+  if (shoppingDif > 0.666) {
+    markup = "yaml"
+  }
+
+  if (shoppingDif < 0.666 && shoppingDif > 0.333) {
+    markup = "fix"
+  }
+
+  if (shoppingDif < 0.333) {
+    markup = "brainfuck"
+  }
+
+  return {
+    title: `:id: \`${setupMessageId}\` - A New Item Request Is Now Available.`,
+    description: `Request From: <@${memberId}>`,
+    color: 5508893,
+    timestamp: "2019-06-20T22:07:57.142Z",
+    footer: {
+      icon_url: "https://odealo.com/uploads/auction_images//9746195585c17934d35039.png",
+      text: "Be excellent to each other"
     },
-    {
-      name: "Quantity Needed:",
-      value: `\`\`\`${shoppingQuantity}\`\`\``,
-      inline: true
-    }
-  ]
-})
+    thumbnail: {
+      url: "https://odealo.com/uploads/auction_images//9746195585c17934d35039.png"
+    },
+
+    fields: [
+      {
+        name: "Item",
+        value: `\`\`\`CSS\n${shoppingList}\n\`\`\``,
+        inline: false
+      },
+      {
+        name: "Quantity Required:",
+        value: `\`\`\`yaml\n${shoppingMax}\n\`\`\``,
+        inline: true
+      },
+      {
+        name: "Quantity Left:",
+        value: `\`\`\`${markup}\n${shoppingQuantity}\n\`\`\``,
+        inline: true
+      }
+    ]
+  }
+}
 
 const myRequestsResponse = (responses) => {
   return responses
@@ -62,18 +88,52 @@ client.on("message", async (msg) => {
   if (msg.author.bot) {
     return
   }
+  if (msg.guild === null) {
+    return
+  }
 
-  const { content, member } = msg
+  const checkRole = msg.member.roles.some(role => role.name === 'Booty Wench');
 
+
+  let { content, member } = msg
+  content = content.toLowerCase();
   //if it's just checking requests
-  if (content.toLowerCase() === "!myrequests") {
+  if (content === "!myrequests" && checkRole) {
     const viewResponse = await view.viewRequests(member.id)
     let userResponse = ""
-    if (!viewResponse) {
-      msg.reply("You don't have any pending requests at this time.")
+    //console.log(viewResponse.length);
+    if (viewResponse.length === 0) {
+      client.users.get(member.id).send("You don't have any pending requests at this time.")
     } else {
       userResponse = myRequestsResponse(viewResponse)
-      msg.reply(userResponse)
+      client.users.get(member.id).send("**Your Current Requests:**```" + userResponse + "```")
+    }
+  }
+
+  if (content === "!viewall" && checkRole) {
+    const viewallResponse = await viewall.viewallRequests(member.id)
+    //console.log(viewResponse.length);
+    if (!viewallResponse) {
+      client.users.get(member.id).send("Sorry, none available.");
+    } else {
+      userResponse = myRequestsResponse(viewallResponse)
+      client.users.get(member.id).send("**All Requests:**```" + userResponse + "```");
+    }
+  }
+
+  if (content.includes("!deleterequest") && checkRole) {
+    let requestId = content.substr(content.indexOf(" ") + 1)
+    console.log(requestId);
+    const deleteResponse = await del.deleteRequest(requestId);
+    console.log(deleteResponse);
+    if (deleteResponse.fulfilled) {
+      const message = await client.channels
+        .get(process.env.BOTCHANNEL)
+        .fetchMessage(deleteResponse.post_id)
+      await message.delete();
+      msg.reply("Request has been deleted. Thanks for letting me know!");
+    } else {
+      msg.reply("Nothing to delete. Check your `ID`!");
     }
   }
 
@@ -100,7 +160,7 @@ client.on("message", async (msg) => {
   //   " )"
   // )
 
-  if (commandSplit === "!request" && !isNaN(shoppingQuantity)) {
+  if (commandSplit === "!request" && !isNaN(shoppingQuantity) && checkRole) {
     const setupMessage = await client.channels
       .get(process.env.BOTCHANNEL)
       .send("[processing]")
@@ -113,12 +173,13 @@ client.on("message", async (msg) => {
     )
 
     if (runRequest) {
-      console.log(runRequest)
+      //console.log(runRequest)
 
       const richembed = createEmbed(
         runRequest[0].id,
         member.id,
         shoppingList,
+        shoppingQuantity,
         shoppingQuantity
       )
 
@@ -134,6 +195,7 @@ client.on("message", async (msg) => {
         msg.reply(
           `${returnResponse}! Check <#${process.env.BOTCHANNEL}> for post`
         )
+        message.pin();
       } catch (e) {
         console.error(e)
       }
@@ -142,12 +204,36 @@ client.on("message", async (msg) => {
     }
   }
 
+  if (commandSplit === "!urequest" && checkRole) {
+    const itemupdate = await update.updateRequest(
+      shoppingList,
+      shoppingQuantity
+    )
+
+    const message = await client.channels
+      .get(process.env.BOTCHANNEL)
+      .fetchMessage(itemupdate.post_id)
+
+    const richembed = createEmbed(
+      itemupdate.request_id,
+      itemupdate.user_id,
+      itemupdate.item_name,
+      itemupdate.to_go,
+      itemupdate.request_max
+    )
+
+    await message.edit({ embed: richembed })
+
+    msg.reply("Update successful. There are now currently " + itemupdate.to_go + " " + itemupdate.item_name + " to go!");
+
+  }
+
   if (commandSplit === "!deposit") {
     const itemdeposit = await deposit.createDeposit(
       shoppingList,
       shoppingQuantity
     )
-    console.log(itemdeposit)
+    //console.log(itemdeposit)
     if (itemdeposit.fulfilled === true) {
       deletePost = await client.channels
         .get(process.env.BOTCHANNEL)
@@ -162,10 +248,11 @@ client.on("message", async (msg) => {
         .fetchMessage(itemdeposit.post_id)
 
       const richembed = createEmbed(
-        itemdeposit.post_id,
+        itemdeposit.request_id,
         itemdeposit.user_id,
         itemdeposit.item_name,
-        itemdeposit.to_go
+        itemdeposit.to_go,
+        itemdeposit.request_max
       )
 
       await message.edit({ embed: richembed })
