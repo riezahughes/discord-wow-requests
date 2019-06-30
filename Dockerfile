@@ -1,5 +1,7 @@
 FROM node:10
 
+RUN apt-get update && apt-get install -y netcat
+
 # Create app directory
 WORKDIR /usr/src/app
 
