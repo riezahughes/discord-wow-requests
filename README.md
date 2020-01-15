@@ -1,6 +1,16 @@
-# GITHUB MARKUP SHIT
+# Discord WoW Requests
 
-also it's a wow bot or something. idk.
+How it works:
+
+- User makes a request
+- A Channel is chosen to post these requests
+- The bot keeps track of how much is left of each request
+- All users can deposit items to the request
+- The post is kept updated in realtime
+- When the request is finished, it is removed from the board and the User who posted is notified. 
+
+This was a joint project with @sashman
+
 
 ## Usage
 
